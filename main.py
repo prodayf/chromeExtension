@@ -3,11 +3,15 @@ from fastapi import FastAPI, HTTPException
 import os
 import yt_dlp
 from tempfile import mkdtemp
+import shutil
 
 app = FastAPI()
 
-# Configuración temporal para almacenar archivos descargados
-TEMP_DIR = mkdtemp()
+# Carpeta de descargas (ajusta la ruta según tu sistema)
+DOWNLOAD_DIR = os.path.expanduser("~/Desktop/chromeExtension")
+
+# Crear la carpeta si no existe
+os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
 def download_audio(youtube_url):
     try:
@@ -16,7 +20,7 @@ def download_audio(youtube_url):
         # Opciones de yt-dlp para descargar solo audio en formato MP3
         ydl_opts = {
             'format': 'bestaudio/best',
-            'outtmpl': os.path.join(TEMP_DIR, '%(title)s.%(ext)s'),
+            'outtmpl': os.path.join(DOWNLOAD_DIR, '%(title)s.%(ext)s'),
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
@@ -80,8 +84,9 @@ async def analyze_youtube(youtube_url: str):
         if bpm is None or key is None or mode is None:
             raise HTTPException(status_code=500, detail="Error procesando el audio")
 
-        # Eliminar el archivo descargado después del análisis (opcional)
+        # Eliminar el archivo descargado después del análisis
         os.remove(audio_filename)
+        print(f"🗑️ Archivo eliminado: {audio_filename}")
 
         return {
             "tonality": key,
