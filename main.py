@@ -1,11 +1,20 @@
 import essentia.standard as es
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 import os
 import yt_dlp
 from tempfile import mkdtemp
 import shutil
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Cambia esto si el frontend está en otro dominio
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Carpeta de descargas (ajusta la ruta según tu sistema)
 DOWNLOAD_DIR = os.path.expanduser("~/Desktop/chromeExtension")
