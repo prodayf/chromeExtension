@@ -33,9 +33,11 @@ def download_audio(youtube_url):
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
-                'preferredquality': '192',
+                'preferredquality': '96',
             }],
-            'quiet': True,  # Evita la salida innecesaria en la consola
+            'downloader': 'aria2c',
+            'download_sections': {'*00-30'},
+            'quiet': True,  # Evita la salida innecesaria en la consola 
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
